@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8fa">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="업무참고자료">
+<meta name="robots" content="noindex,nofollow">
+<title>업무 참고자료</title>
+<style>
+/* 저자극 무채색 — 회사 화면에서 학습도구로 보이지 않게 */
+:root{
+  --bg:#f7f8fa; --card:#ffffff; --line:#e3e6eb; --line2:#eef0f3;
+  --ink:#23272f; --ink2:#5b6270; --ink3:#8b929e;
+  --accent:#3f5a76; --accent-bg:#eef2f6;
+  --ok:#3d6b4a; --wait:#9aa2ae;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:17px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic',
+              'Segoe UI',sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.7;
+  padding:28px 18px 60px; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:660px;margin:0 auto}
+
+header{margin-bottom:26px}
+.kick{font-size:.72rem;letter-spacing:.16em;color:var(--ink3);font-weight:700}
+h1{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;margin-top:6px;line-height:1.3}
+.desc{font-size:.9rem;color:var(--ink2);margin-top:10px;line-height:1.75}
+
+.list{display:flex;flex-direction:column;gap:12px;margin-top:24px}
+a.item,div.item{
+  display:block;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:18px 20px;text-decoration:none;color:inherit;
+  transition:border-color .12s,transform .12s;
+}
+a.item:hover{border-color:var(--accent)}
+a.item:active{transform:scale(.995)}
+div.item{opacity:.62}
+.row{display:flex;align-items:center;gap:12px}
+.nm{font-size:1.06rem;font-weight:700;letter-spacing:-.01em}
+.badge{
+  margin-left:auto;font-size:.7rem;font-weight:700;padding:3px 9px;
+  border-radius:20px;white-space:nowrap;
+}
+.badge.on{background:var(--accent);color:#fff}
+.badge.off{background:#eef0f3;color:var(--wait)}
+.meta{font-size:.82rem;color:var(--ink2);margin-top:7px;line-height:1.65}
+.meta b{color:var(--accent);font-weight:700}
+.prog{
+  margin-top:11px;height:5px;background:var(--line2);border-radius:3px;overflow:hidden;
+}
+.prog i{display:block;height:100%;background:var(--accent);width:0}
+.pt{font-size:.74rem;color:var(--ink3);margin-top:6px}
+
+.note{
+  margin-top:26px;background:var(--accent-bg);border-radius:10px;
+  padding:15px 17px;font-size:.84rem;line-height:1.8;color:var(--ink2);
+}
+.note b{color:var(--ink)}
+footer{margin-top:30px;font-size:.7rem;color:var(--ink3);text-align:center;letter-spacing:.04em}
+
+@media (max-width:420px){
+  html{font-size:16px}
+  body{padding:22px 14px 50px}
+  a.item,div.item{padding:16px 16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kick">REFERENCE</div>
+  <h1>업무 참고자료</h1>
+  <div class="desc">
+    과목을 고르면 오늘 볼 분량이 열립니다.<br>
+    진도는 이 기기에 저장되며, 각 과목 안에서 백업·복원할 수 있습니다.
+  </div>
+</header>
+
+<div class="list">
+
+  <a class="item" href="fm/" data-key="wref.v1.fm">
+    <div class="row">
+      <div class="nm">재무관리</div>
+      <div class="badge on">이용 가능</div>
+    </div>
+    <div class="meta">
+      카드 <b>845</b>장 · 유형 43 · 진술 660 · 공식 142<br>
+      복기본 1,123문항 분석 기준
+    </div>
+    <div class="prog"><i></i></div>
+    <div class="pt">—</div>
+  </a>
+
+  <div class="item">
+    <div class="row">
+      <div class="nm">재무회계</div>
+      <div class="badge off">준비 중</div>
+    </div>
+    <div class="meta">자료가 준비되면 여기에 열립니다.</div>
+  </div>
+
+  <div class="item">
+    <div class="row">
+      <div class="nm">일반경영학</div>
+      <div class="badge off">준비 중</div>
+    </div>
+    <div class="meta">자료가 준비되면 여기에 열립니다.</div>
+  </div>
+
+</div>
+
+<div class="note">
+  <b>폰 홈 화면에 넣어 두면 편합니다.</b><br>
+  아이폰은 공유 → “홈 화면에 추가”, 안드로이드는 메뉴 → “홈 화면에 추가”.
+  주소창 없이 앱처럼 열립니다.<br><br>
+  <b>기기를 옮길 때</b>는 각 과목 안에서 <b>진도 백업</b>을 눌러 저장한 뒤,
+  다른 기기에서 <b>불러오기</b> 하면 이어서 됩니다.
+</div>
+
+<footer>© YOUNGWOO LEE</footer>
+
+</div>
+
+<script>
+// 과목별 진도를 읽어 표시한다. 저장 형식은 각 과목 앱과 동일하다.
+document.querySelectorAll('a.item[data-key]').forEach(function (el) {
+  var bar = el.querySelector('.prog i');
+  var txt = el.querySelector('.pt');
+  try {
+    var raw = localStorage.getItem(el.dataset.key);
+    if (!raw) { txt.textContent = '아직 시작하지 않았습니다'; return; }
+    var S = JSON.parse(raw);
+    var cards = S.cards || S.c || {};
+    var ids = Object.keys(cards);
+    if (!ids.length) { txt.textContent = '아직 시작하지 않았습니다'; return; }
+    // box 가 3 이상이면 자리잡은 카드로 본다
+    var done = ids.filter(function (k) {
+      var b = cards[k].box != null ? cards[k].box : cards[k].b;
+      return b >= 3;
+    }).length;
+    var pct = Math.round(done / ids.length * 100);
+    bar.style.width = pct + '%';
+    txt.textContent = done + ' / ' + ids.length + ' 쪽 정리됨';
+  } catch (e) {
+    txt.textContent = '';
+  }
+});
+</script>
+</body>
+</html>
