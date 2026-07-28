@@ -69,6 +69,27 @@ footer{margin-top:30px;font-size:.7rem;color:var(--ink3);text-align:center;lette
   body{padding:22px 14px 50px}
   a.item,div.item{padding:16px 16px}
 }
+
+/* ── 로그인 (사이트 공용) ─────────────────────────────────── */
+.auth{background:var(--card);border:1px solid var(--line);border-radius:12px;
+      padding:18px 20px;margin-bottom:20px}
+.auth h2{font-size:1rem;font-weight:800;letter-spacing:-.01em;margin-bottom:6px}
+.auth p.d{font-size:.83rem;color:var(--ink2);line-height:1.7;margin-bottom:13px}
+.auth label{display:block;font-size:.78rem;color:var(--ink2);margin:10px 0 5px;font-weight:600}
+.auth input{display:block;width:100%;min-height:44px;font:inherit;font-size:16px;
+            padding:9px 12px;border:1px solid var(--line);border-radius:7px;
+            background:#fcfcfd;color:var(--ink)}
+.auth input:focus{outline:0;border-color:var(--accent)}
+.auth .btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.auth button{min-height:44px;padding:0 18px;font:inherit;font-size:.88rem;font-weight:700;
+             border-radius:7px;cursor:pointer;border:1px solid var(--line);
+             background:var(--card);color:var(--ink)}
+.auth button.pri{background:var(--accent);color:#fff;border-color:var(--accent);flex:1}
+.auth .msg{font-size:.8rem;line-height:1.65;margin-top:11px;color:var(--ink2);min-height:1px}
+.auth .msg.err{color:#a8443c}
+.auth .on{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.auth .on .who{font-size:.88rem;font-weight:700}
+.auth .on .sub{font-size:.78rem;color:var(--ink3)}
 </style>
 
 <meta property="og:type" content="website">
@@ -89,10 +110,37 @@ footer{margin-top:30px;font-size:.7rem;color:var(--ink3);text-align:center;lette
   <div class="kick">REFERENCE</div>
   <h1>업무 참고자료</h1>
   <div class="desc">
-    과목을 고르면 오늘 볼 분량이 열립니다.<br>
-    진도는 이 기기에 저장되며, 각 과목 안에서 백업·복원할 수 있습니다.
+    로그인하시면 폰과 PC 어디서 하셔도 진도가 이어집니다.<br>
+    로그인 없이 과목을 고르셔도 이 기기에서는 그대로 쓰실 수 있습니다.
   </div>
 </header>
+
+
+<div class="auth" id="auth">
+  <div id="authOut">
+    <h2>로그인</h2>
+    <p class="d">로그인해 두시면 폰과 PC 어디서 하셔도 진도가 이어집니다.
+      로그인하지 않아도 이 기기에서는 그대로 쓰실 수 있습니다.</p>
+    <label for="em">메일 주소</label>
+    <input id="em" type="email" autocomplete="username" inputmode="email">
+    <label for="pw">비밀번호</label>
+    <input id="pw" type="password" autocomplete="current-password">
+    <div class="btns">
+      <button class="pri" onclick="doLogin()">로그인</button>
+      <button onclick="doSignup()">처음이면 · 등록</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+  <div id="authIn" style="display:none">
+    <div class="on">
+      <div>
+        <div class="who" id="who"></div>
+        <div class="sub">진도가 기기 사이에서 이어집니다.</div>
+      </div>
+      <button style="margin-left:auto" onclick="doLogout()">로그아웃</button>
+    </div>
+  </div>
+</div>
 
 <div class="list">
 
@@ -131,8 +179,8 @@ footer{margin-top:30px;font-size:.7rem;color:var(--ink3);text-align:center;lette
   <b>폰 홈 화면에 넣어 두면 편합니다.</b><br>
   아이폰은 공유 → “홈 화면에 추가”, 안드로이드는 메뉴 → “홈 화면에 추가”.
   주소창 없이 앱처럼 열립니다.<br><br>
-  <b>기기를 옮길 때</b>는 각 과목 안에서 <b>진도 백업</b>을 눌러 저장한 뒤,
-  다른 기기에서 <b>불러오기</b> 하면 이어서 됩니다.
+  <b>로그인하지 않고 기기를 옮길 때</b>는 각 과목 안에서 <b>설정 · 백업</b>으로
+  진도를 저장한 뒤, 다른 기기에서 불러오시면 됩니다.
 </div>
 
 <footer>© YOUNGWOO LEE</footer>
@@ -140,6 +188,76 @@ footer{margin-top:30px;font-size:.7rem;color:var(--ink3);text-align:center;lette
 </div>
 
 <script>
+
+/* ── 로그인 (Supabase Auth REST) ──────────────────────────────
+   세션은 'wref.auth' 에 저장한다. 각 과목 앱이 같은 키를 읽는다. */
+var SUPA = { url: "https://fmrttbuvdbmjzqphhlli.supabase.co",
+             key: "sb_publishable_UT4jcPm66kw4Qkj8rJsjLQ_YCPuBCUN" };
+var AKEY = 'wref.auth';
+
+function aRead(){ try { return JSON.parse(localStorage.getItem(AKEY)) || null; }
+                  catch(e){ return null; } }
+function aWrite(a){ a ? localStorage.setItem(AKEY, JSON.stringify(a))
+                      : localStorage.removeItem(AKEY); paintAuth(); }
+function say(t, err){ var m=document.getElementById('msg');
+                      m.textContent=t||''; m.className='msg'+(err?' err':''); }
+
+function paintAuth(){
+  var a = aRead(), on = !!(a && a.at);
+  document.getElementById('authOut').style.display = on ? 'none' : '';
+  document.getElementById('authIn').style.display  = on ? '' : 'none';
+  if (on) document.getElementById('who').textContent = a.mail || '연결됨';
+}
+
+function creds(){
+  var e=document.getElementById('em').value.trim(),
+      p=document.getElementById('pw').value;
+  if(!e||!p){ say('메일 주소와 비밀번호를 입력해 주십시오.', 1); return null; }
+  return {email:e, password:p};
+}
+
+function call(path, body){
+  return fetch(SUPA.url + path, {
+    method:'POST',
+    headers:{'apikey':SUPA.key,'Authorization':'Bearer '+SUPA.key,
+             'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); });
+}
+
+function doLogin(){
+  var c = creds(); if(!c) return;
+  say('확인하고 있습니다…');
+  call('/auth/v1/token?grant_type=password', c).then(function(r){
+    if(!r.ok || !r.j.access_token){
+      say(r.j.error_description || r.j.msg || '로그인할 수 없습니다. 메일 주소와 비밀번호를 확인해 주십시오.', 1);
+      return;
+    }
+    aWrite({at:r.j.access_token, rt:r.j.refresh_token,
+            exp: Date.now() + (r.j.expires_in||3600)*1000, mail:c.email});
+    say('');
+  }, function(){ say('연결에 실패했습니다. 잠시 뒤 다시 시도해 주십시오.', 1); });
+}
+
+function doSignup(){
+  var c = creds(); if(!c) return;
+  say('등록하고 있습니다…');
+  call('/auth/v1/signup', c).then(function(r){
+    if(!r.ok){ say(r.j.msg || r.j.error_description || '등록할 수 없습니다.', 1); return; }
+    if(r.j.access_token){
+      aWrite({at:r.j.access_token, rt:r.j.refresh_token,
+              exp: Date.now() + (r.j.expires_in||3600)*1000, mail:c.email});
+      say('');
+    } else {
+      say('확인 메일을 보냈습니다. 메일의 링크를 누르신 뒤 로그인해 주십시오.');
+    }
+  }, function(){ say('연결에 실패했습니다. 잠시 뒤 다시 시도해 주십시오.', 1); });
+}
+
+function doLogout(){ aWrite(null); say(''); }
+
+paintAuth();
+
 // 과목별 진도를 읽어 표시한다. 저장 형식은 각 과목 앱과 동일하다.
 document.querySelectorAll('a.item[data-key]').forEach(function (el) {
   var bar = el.querySelector('.prog i');
